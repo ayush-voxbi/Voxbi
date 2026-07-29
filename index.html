@@ -1,248 +1,370 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VoxBI - Voice to Business Intelligence</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<title>VoxBI - Voice to Business Intelligence</title>
 
-    body {
-      background: #0b1020;
-      color: white;
-      min-height: 100vh;
-    }
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
 
-    header {
-      padding: 20px;
-      text-align: center;
-      border-bottom: 1px solid #252d45;
-    }
+body{
+  background:#0b1020;
+  color:white;
+  min-height:100vh;
+}
 
-    .logo {
-      font-size: 28px;
-      font-weight: bold;
-    }
+header{
+  padding:20px;
+  text-align:center;
+  border-bottom:1px solid #252d45;
+}
 
-    .logo span {
-      color: #6c63ff;
-    }
+.logo{
+  font-size:28px;
+  font-weight:bold;
+}
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 35px 20px;
-    }
+.logo span{
+  color:#6c63ff;
+}
 
-    .hero {
-      text-align: center;
-      margin-bottom: 35px;
-    }
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:35px 20px;
+}
 
-    .hero h1 {
-      font-size: 38px;
-      margin-bottom: 12px;
-    }
+.hero{
+  text-align:center;
+  margin-bottom:35px;
+}
 
-    .hero p {
-      color: #aab2c8;
-      font-size: 17px;
-      line-height: 1.6;
-    }
+.hero h1{
+  font-size:38px;
+  margin-bottom:12px;
+}
 
-    .card {
-      background: #151c30;
-      border: 1px solid #29334f;
-      border-radius: 18px;
-      padding: 25px;
-      margin-bottom: 25px;
-    }
+.hero p{
+  color:#aab2c8;
+  font-size:17px;
+  line-height:1.6;
+}
 
-    .card h2 {
-      margin-bottom: 15px;
-    }
+.card{
+  background:#151c30;
+  border:1px solid #29334f;
+  border-radius:18px;
+  padding:25px;
+  margin-bottom:25px;
+}
 
-    textarea {
-      width: 100%;
-      min-height: 140px;
-      resize: vertical;
-      background: #0c1222;
-      color: white;
-      border: 1px solid #303b5c;
-      border-radius: 12px;
-      padding: 15px;
-      font-size: 16px;
-      outline: none;
-    }
+.card h2{
+  margin-bottom:15px;
+}
 
-    button {
-      width: 100%;
-      margin-top: 15px;
-      padding: 15px;
-      border: none;
-      border-radius: 12px;
-      background: #6c63ff;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+textarea{
+  width:100%;
+  min-height:140px;
+  resize:vertical;
+  background:#0c1222;
+  color:white;
+  border:1px solid #303b5c;
+  border-radius:12px;
+  padding:15px;
+  font-size:16px;
+  outline:none;
+}
 
-    button:hover {
-      opacity: 0.9;
-    }
+.buttons{
+  display:flex;
+  gap:10px;
+}
 
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-top: 20px;
-    }
+button{
+  flex:1;
+  margin-top:15px;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  background:#6c63ff;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    .stat {
-      background: #0c1222;
-      border: 1px solid #29334f;
-      border-radius: 14px;
-      padding: 20px;
-      text-align: center;
-    }
+button:hover{
+  opacity:.9;
+}
 
-    .stat h3 {
-      font-size: 28px;
-      margin-bottom: 7px;
-    }
+#voiceBtn{
+  background:#252d45;
+}
 
-    .stat p {
-      color: #9da7bd;
-      font-size: 13px;
-    }
+#voiceBtn.recording{
+  background:#d33;
+}
 
-    .status {
-      margin-top: 15px;
-      color: #9da7bd;
-      text-align: center;
-    }
+.dashboard{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-top:20px;
+}
 
-    @media (max-width: 650px) {
-      .hero h1 {
-        font-size: 30px;
-      }
+.stat{
+  background:#0c1222;
+  border:1px solid #29334f;
+  border-radius:14px;
+  padding:20px;
+  text-align:center;
+}
 
-      .dashboard {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-  </style>
+.stat h3{
+  font-size:28px;
+  margin-bottom:7px;
+}
+
+.stat p{
+  color:#9da7bd;
+  font-size:13px;
+}
+
+.status{
+  margin-top:15px;
+  color:#9da7bd;
+  text-align:center;
+}
+
+@media(max-width:650px){
+  .hero h1{
+    font-size:30px;
+  }
+
+  .dashboard{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .buttons{
+    flex-direction:column;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <div class="logo">Vox<span>BI</span></div>
-  </header>
+<header>
+  <div class="logo">Vox<span>BI</span></div>
+</header>
 
-  <main class="container">
+<main class="container">
 
-    <section class="hero">
-      <h1>Turn Voice Into Business Intelligence</h1>
-      <p>
-        Field executives speak their daily reports.
-        VoxBI turns those updates into structured business data.
-      </p>
-    </section>
+<section class="hero">
+  <h1>Turn Voice Into Business Intelligence</h1>
 
-    <section class="card">
-      <h2>🎙️ Field Report</h2>
+  <p>
+    Speak your field report and VoxBI will convert it
+    into useful business data.
+  </p>
+</section>
 
-      <textarea id="report" placeholder="Example:
-Met with 15 merchants today.
-10 agreed to install the payment terminal.
-2 complained about settlement delays.
-3 were not interested."></textarea>
+<section class="card">
 
-      <button onclick="processReport()">
-        Process Report
-      </button>
+<h2>🎙️ Field Report</h2>
 
-      <div class="status" id="status">
-        Ready to process your report.
-      </div>
-    </section>
+<textarea
+id="report"
+placeholder="Speak or type your report here...">
+</textarea>
 
-    <section class="card">
-      <h2>📊 Business Dashboard</h2>
+<div class="buttons">
 
-      <div class="dashboard">
+<button id="voiceBtn" onclick="startVoice()">
+🎙️ Speak Report
+</button>
 
-        <div class="stat">
-          <h3 id="visited">0</h3>
-          <p>Merchants Visited</p>
-        </div>
+<button onclick="processReport()">
+📊 Process Report
+</button>
 
-        <div class="stat">
-          <h3 id="interested">0</h3>
-          <p>Interested</p>
-        </div>
+</div>
 
-        <div class="stat">
-          <h3 id="complaints">0</h3>
-          <p>Complaints</p>
-        </div>
+<div class="status" id="status">
+Ready.
+</div>
 
-        <div class="stat">
-          <h3 id="notInterested">0</h3>
-          <p>Not Interested</p>
-        </div>
+</section>
 
-      </div>
-    </section>
+<section class="card">
 
-  </main>
+<h2>📊 Business Dashboard</h2>
 
-  <script>
+<div class="dashboard">
 
-    function processReport() {
+<div class="stat">
+<h3 id="visited">0</h3>
+<p>Merchants Visited</p>
+</div>
 
-      const text = document
-        .getElementById("report")
-        .value
-        .toLowerCase();
+<div class="stat">
+<h3 id="interested">0</h3>
+<p>Interested</p>
+</div>
 
-      if (!text.trim()) {
-        alert("Please enter a field report first.");
-        return;
-      }
+<div class="stat">
+<h3 id="complaints">0</h3>
+<p>Complaints</p>
+</div>
 
-      document.getElementById("status").innerText =
-        "Processing report...";
+<div class="stat">
+<h3 id="notInterested">0</h3>
+<p>Not Interested</p>
+</div>
 
-      setTimeout(() => {
+</div>
 
-        let numbers = text.match(/\d+/g) || [];
+</section>
 
-        let visited = Number(numbers[0]) || 0;
-        let interested = Number(numbers[1]) || 0;
-        let complaints = Number(numbers[2]) || 0;
-        let notInterested = Number(numbers[3]) || 0;
+</main>
 
-        document.getElementById("visited").innerText = visited;
-        document.getElementById("interested").innerText = interested;
-        document.getElementById("complaints").innerText = complaints;
-        document.getElementById("notInterested").innerText = notInterested;
+<script>
 
-        document.getElementById("status").innerText =
-          "Report processed successfully ✓";
+let recognition;
+let isRecording=false;
 
-      }, 700);
+function startVoice(){
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+
+    alert(
+      "Voice recognition is not supported in this browser. Try Chrome."
+    );
+
+    return;
+  }
+
+  if(isRecording){
+
+    recognition.stop();
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+
+  recognition.lang="en-IN";
+
+  recognition.continuous=true;
+
+  recognition.interimResults=true;
+
+  recognition.onstart=function(){
+
+    isRecording=true;
+
+    document.getElementById("voiceBtn").innerText=
+      "⏹️ Stop Recording";
+
+    document.getElementById("voiceBtn")
+      .classList.add("recording");
+
+    document.getElementById("status").innerText=
+      "Listening... Speak your field report.";
+  };
+
+  recognition.onresult=function(event){
+
+    let finalText="";
+
+    for(let i=event.resultIndex;i<event.results.length;i++){
+
+      finalText += event.results[i][0].transcript;
     }
 
-  </script>
+    document.getElementById("report").value=
+      finalText;
+  };
+
+  recognition.onerror=function(){
+
+    document.getElementById("status").innerText=
+      "Voice recognition error. Please try again.";
+  };
+
+  recognition.onend=function(){
+
+    isRecording=false;
+
+    document.getElementById("voiceBtn").innerText=
+      "🎙️ Speak Report";
+
+    document.getElementById("voiceBtn")
+      .classList.remove("recording");
+
+    document.getElementById("status").innerText=
+      "Voice report captured ✓";
+  };
+
+  recognition.start();
+}
+
+
+function processReport(){
+
+  const text=document
+    .getElementById("report")
+    .value
+    .toLowerCase();
+
+  if(!text.trim()){
+
+    alert("Please speak or enter a report first.");
+
+    return;
+  }
+
+  document.getElementById("status").innerText=
+    "Processing report...";
+
+  setTimeout(()=>{
+
+    const numbers=text.match(/\d+/g)||[];
+
+    const visited=Number(numbers[0])||0;
+    const interested=Number(numbers[1])||0;
+    const complaints=Number(numbers[2])||0;
+    const notInterested=Number(numbers[3])||0;
+
+    document.getElementById("visited").innerText=
+      visited;
+
+    document.getElementById("interested").innerText=
+      interested;
+
+    document.getElementById("complaints").innerText=
+      complaints;
+
+    document.getElementById("notInterested").innerText=
+      notInterested;
+
+    document.getElementById("status").innerText=
+      "Report processed successfully ✓";
+
+  },700);
+}
+
+</script>
 
 </body>
 </html>
