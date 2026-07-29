@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoxBI - Voice to Business Intelligence</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0b1020;
+      color: white;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #252d45;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: #6c63ff;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 35px 20px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .hero h1 {
+      font-size: 38px;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      color: #aab2c8;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: #151c30;
+      border: 1px solid #29334f;
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    .card h2 {
+      margin-bottom: 15px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      background: #0c1222;
+      color: white;
+      border: 1px solid #303b5c;
+      border-radius: 12px;
+      padding: 15px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #6c63ff;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      background: #0c1222;
+      border: 1px solid #29334f;
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat h3 {
+      font-size: 28px;
+      margin-bottom: 7px;
+    }
+
+    .stat p {
+      color: #9da7bd;
+      font-size: 13px;
+    }
+
+    .status {
+      margin-top: 15px;
+      color: #9da7bd;
+      text-align: center;
+    }
+
+    @media (max-width: 650px) {
+      .hero h1 {
+        font-size: 30px;
+      }
+
+      .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">Vox<span>BI</span></div>
+  </header>
+
+  <main class="container">
+
+    <section class="hero">
+      <h1>Turn Voice Into Business Intelligence</h1>
+      <p>
+        Field executives speak their daily reports.
+        VoxBI turns those updates into structured business data.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>🎙️ Field Report</h2>
+
+      <textarea id="report" placeholder="Example:
+Met with 15 merchants today.
+10 agreed to install the payment terminal.
+2 complained about settlement delays.
+3 were not interested."></textarea>
+
+      <button onclick="processReport()">
+        Process Report
+      </button>
+
+      <div class="status" id="status">
+        Ready to process your report.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📊 Business Dashboard</h2>
+
+      <div class="dashboard">
+
+        <div class="stat">
+          <h3 id="visited">0</h3>
+          <p>Merchants Visited</p>
+        </div>
+
+        <div class="stat">
+          <h3 id="interested">0</h3>
+          <p>Interested</p>
+        </div>
+
+        <div class="stat">
+          <h3 id="complaints">0</h3>
+          <p>Complaints</p>
+        </div>
+
+        <div class="stat">
+          <h3 id="notInterested">0</h3>
+          <p>Not Interested</p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+
+    function processReport() {
+
+      const text = document
+        .getElementById("report")
+        .value
+        .toLowerCase();
+
+      if (!text.trim()) {
+        alert("Please enter a field report first.");
+        return;
+      }
+
+      document.getElementById("status").innerText =
+        "Processing report...";
+
+      setTimeout(() => {
+
+        let numbers = text.match(/\d+/g) || [];
+
+        let visited = Number(numbers[0]) || 0;
+        let interested = Number(numbers[1]) || 0;
+        let complaints = Number(numbers[2]) || 0;
+        let notInterested = Number(numbers[3]) || 0;
+
+        document.getElementById("visited").innerText = visited;
+        document.getElementById("interested").innerText = interested;
+        document.getElementById("complaints").innerText = complaints;
+        document.getElementById("notInterested").innerText = notInterested;
+
+        document.getElementById("status").innerText =
+          "Report processed successfully ✓";
+
+      }, 700);
+    }
+
+  </script>
+
+</body>
+</html>
