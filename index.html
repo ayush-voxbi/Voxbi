@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>VoxBI - Voice to Business Intelligence</title>
+<title>VoxBI - AI Business Intelligence</title>
 
 <style>
 *{
@@ -71,7 +71,7 @@ header{
 
 textarea{
   width:100%;
-  min-height:140px;
+  min-height:150px;
   resize:vertical;
   background:#0c1222;
   color:white;
@@ -100,10 +100,6 @@ button{
   cursor:pointer;
 }
 
-button:hover{
-  opacity:.9;
-}
-
 #voiceBtn{
   background:#252d45;
 }
@@ -114,7 +110,7 @@ button:hover{
 
 .dashboard{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(2,1fr);
   gap:15px;
   margin-top:20px;
 }
@@ -128,13 +124,21 @@ button:hover{
 }
 
 .stat h3{
-  font-size:28px;
+  font-size:30px;
   margin-bottom:7px;
 }
 
 .stat p{
   color:#9da7bd;
   font-size:13px;
+}
+
+.result{
+  margin-top:20px;
+  padding:18px;
+  background:#0c1222;
+  border-radius:12px;
+  line-height:1.6;
 }
 
 .status{
@@ -144,12 +148,9 @@ button:hover{
 }
 
 @media(max-width:650px){
+
   .hero h1{
     font-size:30px;
-  }
-
-  .dashboard{
-    grid-template-columns:repeat(2,1fr);
   }
 
   .buttons{
@@ -168,13 +169,16 @@ button:hover{
 <main class="container">
 
 <section class="hero">
-  <h1>Turn Voice Into Business Intelligence</h1>
 
-  <p>
-    Speak your field report and VoxBI will convert it
-    into useful business data.
-  </p>
+<h1>Turn Voice Into Business Intelligence</h1>
+
+<p>
+Speak your field report and AI will automatically
+convert it into useful business data.
+</p>
+
 </section>
+
 
 <section class="card">
 
@@ -182,8 +186,9 @@ button:hover{
 
 <textarea
 id="report"
-placeholder="Speak or type your report here...">
-</textarea>
+placeholder="Example: Met with 15 merchants today. 10 were interested. 2 complained about settlement delays and 3 were not interested."
+></textarea>
+
 
 <div class="buttons">
 
@@ -191,8 +196,8 @@ placeholder="Speak or type your report here...">
 🎙️ Speak Report
 </button>
 
-<button onclick="processReport()">
-📊 Process Report
+<button onclick="analyzeReport()">
+🧠 Analyze with AI
 </button>
 
 </div>
@@ -202,6 +207,7 @@ Ready.
 </div>
 
 </section>
+
 
 <section class="card">
 
@@ -220,14 +226,28 @@ Ready.
 </div>
 
 <div class="stat">
+<h3 id="notInterested">0</h3>
+<p>Not Interested</p>
+</div>
+
+<div class="stat">
 <h3 id="complaints">0</h3>
 <p>Complaints</p>
 </div>
 
-<div class="stat">
-<h3 id="notInterested">0</h3>
-<p>Not Interested</p>
 </div>
+
+<div class="result">
+
+<strong>Complaint Reasons:</strong>
+
+<p id="reasons">No data yet.</p>
+
+<br>
+
+<strong>AI Summary:</strong>
+
+<p id="summary">No report analyzed yet.</p>
 
 </div>
 
@@ -235,10 +255,14 @@ Ready.
 
 </main>
 
+
 <script>
 
 let recognition;
-let isRecording=false;
+let isRecording = false;
+
+
+/* VOICE INPUT */
 
 function startVoice(){
 
@@ -249,119 +273,190 @@ function startVoice(){
   if(!SpeechRecognition){
 
     alert(
-      "Voice recognition is not supported in this browser. Try Chrome."
+      "Voice recognition is not supported. Please use Chrome."
     );
 
     return;
   }
 
+
   if(isRecording){
 
     recognition.stop();
+
     return;
   }
 
+
   recognition = new SpeechRecognition();
 
-  recognition.lang="en-IN";
+  recognition.lang = "en-IN";
 
-  recognition.continuous=true;
+  recognition.continuous = true;
 
-  recognition.interimResults=true;
+  recognition.interimResults = true;
 
-  recognition.onstart=function(){
 
-    isRecording=true;
+  recognition.onstart = function(){
 
-    document.getElementById("voiceBtn").innerText=
+    isRecording = true;
+
+    document.getElementById("voiceBtn").innerText =
       "⏹️ Stop Recording";
 
     document.getElementById("voiceBtn")
       .classList.add("recording");
 
-    document.getElementById("status").innerText=
-      "Listening... Speak your field report.";
+    document.getElementById("status").innerText =
+      "Listening... Speak your report.";
   };
 
-  recognition.onresult=function(event){
 
-    let finalText="";
+  recognition.onresult = function(event){
 
-    for(let i=event.resultIndex;i<event.results.length;i++){
+    let finalText = "";
+
+    for(
+      let i = event.resultIndex;
+      i < event.results.length;
+      i++
+    ){
 
       finalText += event.results[i][0].transcript;
     }
 
-    document.getElementById("report").value=
+    document.getElementById("report").value =
       finalText;
   };
 
-  recognition.onerror=function(){
 
-    document.getElementById("status").innerText=
+  recognition.onerror = function(){
+
+    document.getElementById("status").innerText =
       "Voice recognition error. Please try again.";
   };
 
-  recognition.onend=function(){
 
-    isRecording=false;
+  recognition.onend = function(){
 
-    document.getElementById("voiceBtn").innerText=
+    isRecording = false;
+
+    document.getElementById("voiceBtn").innerText =
       "🎙️ Speak Report";
 
     document.getElementById("voiceBtn")
       .classList.remove("recording");
 
-    document.getElementById("status").innerText=
+    document.getElementById("status").innerText =
       "Voice report captured ✓";
   };
 
+
   recognition.start();
+
 }
 
 
-function processReport(){
+/* GEMINI AI */
 
-  const text=document
-    .getElementById("report")
-    .value
-    .toLowerCase();
+async function analyzeReport(){
 
-  if(!text.trim()){
+  const report =
+    document.getElementById("report").value.trim();
 
-    alert("Please speak or enter a report first.");
+
+  if(!report){
+
+    alert("Please speak or type a field report first.");
 
     return;
   }
 
-  document.getElementById("status").innerText=
-    "Processing report...";
 
-  setTimeout(()=>{
+  document.getElementById("status").innerText =
+    "🧠 AI is analyzing your report...";
 
-    const numbers=text.match(/\d+/g)||[];
 
-    const visited=Number(numbers[0])||0;
-    const interested=Number(numbers[1])||0;
-    const complaints=Number(numbers[2])||0;
-    const notInterested=Number(numbers[3])||0;
+  try{
 
-    document.getElementById("visited").innerText=
-      visited;
+    const response = await fetch("/api/analyze",{
 
-    document.getElementById("interested").innerText=
-      interested;
+      method:"POST",
 
-    document.getElementById("complaints").innerText=
-      complaints;
+      headers:{
+        "Content-Type":"application/json"
+      },
 
-    document.getElementById("notInterested").innerText=
-      notInterested;
+      body:JSON.stringify({
+        report:report
+      })
 
-    document.getElementById("status").innerText=
-      "Report processed successfully ✓";
+    });
 
-  },700);
+
+    const data = await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error || "AI analysis failed"
+      );
+
+    }
+
+
+    /* UPDATE DASHBOARD */
+
+    document.getElementById("visited").innerText =
+      data.merchants_visited ?? 0;
+
+
+    document.getElementById("interested").innerText =
+      data.interested ?? 0;
+
+
+    document.getElementById("notInterested").innerText =
+      data.not_interested ?? 0;
+
+
+    document.getElementById("complaints").innerText =
+      data.complaints ?? 0;
+
+
+    /* COMPLAINT REASONS */
+
+    const reasons =
+      data.complaint_reasons || [];
+
+
+    document.getElementById("reasons").innerText =
+      reasons.length
+      ? reasons.join(", ")
+      : "No complaints reported";
+
+
+    /* SUMMARY */
+
+    document.getElementById("summary").innerText =
+      data.summary || "No summary available";
+
+
+    document.getElementById("status").innerText =
+      "✅ AI analysis completed";
+
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    document.getElementById("status").innerText =
+      "❌ AI analysis failed: " + error.message;
+
+  }
+
 }
 
 </script>
