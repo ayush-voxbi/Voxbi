@@ -24,6 +24,10 @@ header{
   padding:20px;
   text-align:center;
   border-bottom:1px solid #252d45;
+  position:sticky;
+  top:0;
+  background:#0b1020;
+  z-index:10;
 }
 
 .logo{
@@ -80,6 +84,10 @@ textarea{
   padding:15px;
   font-size:16px;
   outline:none;
+}
+
+textarea:focus{
+  border-color:#6c63ff;
 }
 
 .buttons{
@@ -151,7 +159,28 @@ button:hover{
   text-align:center;
 }
 
-/* REPORT HISTORY */
+/* ANALYTICS */
+
+.analytics-highlight{
+  margin-top:20px;
+  padding:18px;
+  background:#0c1222;
+  border:1px solid #29334f;
+  border-radius:14px;
+  text-align:center;
+}
+
+.analytics-highlight strong{
+  font-size:14px;
+  color:#9da7bd;
+}
+
+.analytics-highlight h3{
+  font-size:34px;
+  margin-top:6px;
+}
+
+/* HISTORY */
 
 .history-item{
   background:#0c1222;
@@ -234,14 +263,12 @@ button:hover{
 <main class="container">
 
 <section class="hero">
+  <h1>Turn Voice Into Business Intelligence</h1>
 
-<h1>Turn Voice Into Business Intelligence</h1>
-
-<p>
-Speak your field report and AI will automatically
-convert it into useful business data.
-</p>
-
+  <p>
+    Speak your field report and AI will automatically
+    convert it into useful business data.
+  </p>
 </section>
 
 
@@ -249,88 +276,129 @@ convert it into useful business data.
 
 <section class="card">
 
-<h2>🎙️ Field Report</h2>
+  <h2>🎙️ Field Report</h2>
 
-<textarea
-id="report"
-placeholder="Example: Met with 15 merchants today. 10 were interested. 2 complained about settlement delays and 3 were not interested."
-></textarea>
+  <textarea
+    id="report"
+    placeholder="Example: Met with 15 merchants today. 10 were interested. 2 complained about settlement delays and 3 were not interested."
+  ></textarea>
 
-<div class="buttons">
+  <div class="buttons">
 
-<button id="voiceBtn" onclick="startVoice()">
-🎙️ Speak Report
-</button>
+    <button id="voiceBtn" onclick="startVoice()">
+      🎙️ Speak Report
+    </button>
 
-<button onclick="analyzeReport()">
-🧠 Analyze with AI
-</button>
+    <button onclick="analyzeReport()">
+      🧠 Analyze with AI
+    </button>
 
-</div>
+  </div>
 
-<div class="status" id="status">
-Ready.
-</div>
-
-</section>
-
-
-<!-- DASHBOARD -->
-
-<section class="card">
-
-<h2>📊 Business Dashboard</h2>
-
-<div class="dashboard">
-
-<div class="stat">
-<h3 id="visited">0</h3>
-<p>Merchants Visited</p>
-</div>
-
-<div class="stat">
-<h3 id="interested">0</h3>
-<p>Interested</p>
-</div>
-
-<div class="stat">
-<h3 id="notInterested">0</h3>
-<p>Not Interested</p>
-</div>
-
-<div class="stat">
-<h3 id="complaints">0</h3>
-<p>Complaints</p>
-</div>
-
-</div>
-
-<div class="result">
-
-<strong>Complaint Reasons:</strong>
-
-<p id="reasons">No data yet.</p>
-
-<br>
-
-<strong>AI Summary:</strong>
-
-<p id="summary">No report analyzed yet.</p>
-
-</div>
+  <div class="status" id="status">
+    Ready.
+  </div>
 
 </section>
 
 
-<!-- REPORT HISTORY -->
+<!-- CURRENT REPORT -->
 
 <section class="card">
 
-<h2>🕘 Recent Reports</h2>
+  <h2>📊 Current Report</h2>
 
-<div id="history">
-<p class="status">Loading reports...</p>
-</div>
+  <div class="dashboard">
+
+    <div class="stat">
+      <h3 id="visited">0</h3>
+      <p>Merchants Visited</p>
+    </div>
+
+    <div class="stat">
+      <h3 id="interested">0</h3>
+      <p>Interested</p>
+    </div>
+
+    <div class="stat">
+      <h3 id="notInterested">0</h3>
+      <p>Not Interested</p>
+    </div>
+
+    <div class="stat">
+      <h3 id="complaints">0</h3>
+      <p>Complaints</p>
+    </div>
+
+  </div>
+
+  <div class="result">
+
+    <strong>Complaint Reasons:</strong>
+
+    <p id="reasons">No data yet.</p>
+
+    <br>
+
+    <strong>AI Summary:</strong>
+
+    <p id="summary">No report analyzed yet.</p>
+
+  </div>
+
+</section>
+
+
+<!-- ANALYTICS -->
+
+<section class="card">
+
+  <h2>📈 Analytics Overview</h2>
+
+  <div class="dashboard">
+
+    <div class="stat">
+      <h3 id="totalReports">0</h3>
+      <p>Total Reports</p>
+    </div>
+
+    <div class="stat">
+      <h3 id="totalMerchants">0</h3>
+      <p>Total Merchants</p>
+    </div>
+
+    <div class="stat">
+      <h3 id="totalInterested">0</h3>
+      <p>Total Interested</p>
+    </div>
+
+    <div class="stat">
+      <h3 id="totalComplaints">0</h3>
+      <p>Total Complaints</p>
+    </div>
+
+  </div>
+
+  <div class="analytics-highlight">
+
+    <strong>Overall Merchant Interest Rate</strong>
+
+    <h3 id="interestRate">0%</h3>
+
+  </div>
+
+</section>
+
+
+<!-- HISTORY -->
+
+<section class="card">
+
+  <h2>🕘 Recent Reports</h2>
+
+  <div id="history">
+    <p class="status">Loading reports...</p>
+  </div>
 
 </section>
 
@@ -370,9 +438,7 @@ function startVoice(){
   recognition = new SpeechRecognition();
 
   recognition.lang = "en-IN";
-
   recognition.continuous = true;
-
   recognition.interimResults = true;
 
 
@@ -432,7 +498,6 @@ function startVoice(){
 
 
   recognition.start();
-
 }
 
 
@@ -443,14 +508,14 @@ async function analyzeReport(){
   const report =
     document.getElementById("report").value.trim();
 
-
   if(!report){
 
-    alert("Please speak or type a field report first.");
+    alert(
+      "Please speak or type a field report first."
+    );
 
     return;
   }
-
 
   document.getElementById("status").innerText =
     "🧠 AI is analyzing your report...";
@@ -458,19 +523,20 @@ async function analyzeReport(){
 
   try{
 
-    const response = await fetch("/api/analyze",{
+    const response = await fetch(
+      "/api/analyze",
+      {
+        method:"POST",
 
-      method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
 
-      headers:{
-        "Content-Type":"application/json"
-      },
-
-      body:JSON.stringify({
-        report:report
-      })
-
-    });
+        body:JSON.stringify({
+          report:report
+        })
+      }
+    );
 
 
     const data = await response.json();
@@ -481,23 +547,19 @@ async function analyzeReport(){
       throw new Error(
         data.error || "AI analysis failed"
       );
-
     }
 
 
-    /* UPDATE DASHBOARD */
+    /* CURRENT REPORT */
 
     document.getElementById("visited").innerText =
       data.merchants_visited ?? 0;
 
-
     document.getElementById("interested").innerText =
       data.interested ?? 0;
 
-
     document.getElementById("notInterested").innerText =
       data.not_interested ?? 0;
-
 
     document.getElementById("complaints").innerText =
       data.complaints ?? 0;
@@ -507,7 +569,6 @@ async function analyzeReport(){
 
     const reasons =
       data.complaint_reasons || [];
-
 
     document.getElementById("reasons").innerText =
       reasons.length
@@ -525,9 +586,10 @@ async function analyzeReport(){
       "✅ AI analysis completed";
 
 
-    /* REFRESH HISTORY */
+    /* REFRESH */
 
-    loadHistory();
+    await loadHistory();
+    await loadAnalytics();
 
   }
 
@@ -537,18 +599,63 @@ async function analyzeReport(){
 
     document.getElementById("status").innerText =
       "❌ AI analysis failed: " + error.message;
-
   }
-
 }
 
 
-/* LOAD REPORT HISTORY */
+/* ANALYTICS */
+
+async function loadAnalytics(){
+
+  try{
+
+    const response =
+      await fetch("/api/analytics");
+
+    const data =
+      await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error || "Could not load analytics"
+      );
+    }
+
+
+    document.getElementById("totalReports").innerText =
+      data.total_reports ?? 0;
+
+    document.getElementById("totalMerchants").innerText =
+      data.total_merchants ?? 0;
+
+    document.getElementById("totalInterested").innerText =
+      data.total_interested ?? 0;
+
+    document.getElementById("totalComplaints").innerText =
+      data.total_complaints ?? 0;
+
+    document.getElementById("interestRate").innerText =
+      (data.interest_rate ?? 0) + "%";
+
+  }
+
+  catch(error){
+
+    console.error("Analytics error:", error);
+
+  }
+}
+
+
+/* HISTORY */
 
 async function loadHistory(){
 
   const historyBox =
     document.getElementById("history");
+
 
   try{
 
@@ -564,7 +671,6 @@ async function loadHistory(){
       throw new Error(
         data.error || "Could not load history"
       );
-
     }
 
 
@@ -582,7 +688,7 @@ async function loadHistory(){
 
 
     historyBox.innerHTML =
-      reports.map(report => {
+      reports.map(function(report){
 
         const date =
           new Date(report.created_at);
@@ -592,7 +698,6 @@ async function loadHistory(){
 
 
         return `
-
           <div class="history-item">
 
             <div class="history-top">
@@ -611,54 +716,34 @@ async function loadHistory(){
             <div class="history-metrics">
 
               <div class="history-metric">
-
                 <strong>
-                  ${report.merchants_visited}
+                  ${report.merchants_visited ?? 0}
                 </strong>
-
-                <span>
-                  Visited
-                </span>
-
+                <span>Visited</span>
               </div>
 
 
               <div class="history-metric">
-
                 <strong>
-                  ${report.interested}
+                  ${report.interested ?? 0}
                 </strong>
-
-                <span>
-                  Interested
-                </span>
-
+                <span>Interested</span>
               </div>
 
 
               <div class="history-metric">
-
                 <strong>
-                  ${report.not_interested}
+                  ${report.not_interested ?? 0}
                 </strong>
-
-                <span>
-                  Not Interested
-                </span>
-
+                <span>Not Interested</span>
               </div>
 
 
               <div class="history-metric">
-
                 <strong>
-                  ${report.complaints}
+                  ${report.complaints ?? 0}
                 </strong>
-
-                <span>
-                  Complaints
-                </span>
-
+                <span>Complaints</span>
               </div>
 
             </div>
@@ -666,9 +751,7 @@ async function loadHistory(){
 
             <div class="history-summary">
 
-              <strong>
-                Summary:
-              </strong>
+              <strong>Summary:</strong>
 
               ${report.summary || "No summary available"}
 
@@ -680,9 +763,7 @@ async function loadHistory(){
               ? `
                 <div class="history-summary">
 
-                  <strong>
-                    Complaint:
-                  </strong>
+                  <strong>Complaint:</strong>
 
                   ${reasons.join(", ")}
 
@@ -692,27 +773,25 @@ async function loadHistory(){
             }
 
           </div>
-
         `;
 
       }).join("");
 
-
   }
+
   catch(error){
 
-    console.error(error);
+    console.error("History error:", error);
 
     historyBox.innerHTML =
       '<p class="status">❌ Could not load report history.</p>';
-
   }
-
 }
 
 
-/* LOAD HISTORY WHEN PAGE OPENS */
+/* INITIAL LOAD */
 
+loadAnalytics();
 loadHistory();
 
 </script>
