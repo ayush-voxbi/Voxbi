@@ -5,61 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>VoxBI - AI Business Intelligence</title>
-.history-item{
-  background:#0c1222;
-  border:1px solid #29334f;
-  border-radius:14px;
-  padding:18px;
-  margin-top:12px;
-}
 
-.history-top{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:10px;
-}
-
-.history-date{
-  color:#8f9ab3;
-  font-size:12px;
-}
-
-.history-metrics{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  margin:12px 0;
-}
-
-.history-metric{
-  background:#151c30;
-  padding:10px;
-  border-radius:8px;
-  text-align:center;
-}
-
-.history-metric strong{
-  display:block;
-  font-size:18px;
-}
-
-.history-metric span{
-  color:#8f9ab3;
-  font-size:11px;
-}
-
-.history-summary{
-  color:#c5ccda;
-  line-height:1.5;
-  font-size:14px;
-}
-
-@media(max-width:650px){
-  .history-metrics{
-    grid-template-columns:repeat(2,1fr);
-  }
-}
 <style>
 *{
   box-sizing:border-box;
@@ -154,6 +100,10 @@ button{
   cursor:pointer;
 }
 
+button:hover{
+  opacity:.9;
+}
+
 #voiceBtn{
   background:#252d45;
 }
@@ -201,6 +151,59 @@ button{
   text-align:center;
 }
 
+/* REPORT HISTORY */
+
+.history-item{
+  background:#0c1222;
+  border:1px solid #29334f;
+  border-radius:14px;
+  padding:18px;
+  margin-top:12px;
+}
+
+.history-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.history-date{
+  color:#8f9ab3;
+  font-size:12px;
+}
+
+.history-metrics{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin:12px 0;
+}
+
+.history-metric{
+  background:#151c30;
+  padding:10px;
+  border-radius:8px;
+  text-align:center;
+}
+
+.history-metric strong{
+  display:block;
+  font-size:18px;
+}
+
+.history-metric span{
+  color:#8f9ab3;
+  font-size:11px;
+}
+
+.history-summary{
+  color:#c5ccda;
+  line-height:1.5;
+  font-size:14px;
+  margin-top:8px;
+}
+
 @media(max-width:650px){
 
   .hero h1{
@@ -208,6 +211,14 @@ button{
   }
 
   .buttons{
+    flex-direction:column;
+  }
+
+  .history-metrics{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .history-top{
     flex-direction:column;
   }
 }
@@ -234,6 +245,8 @@ convert it into useful business data.
 </section>
 
 
+<!-- FIELD REPORT -->
+
 <section class="card">
 
 <h2>🎙️ Field Report</h2>
@@ -242,7 +255,6 @@ convert it into useful business data.
 id="report"
 placeholder="Example: Met with 15 merchants today. 10 were interested. 2 complained about settlement delays and 3 were not interested."
 ></textarea>
-
 
 <div class="buttons">
 
@@ -262,6 +274,8 @@ Ready.
 
 </section>
 
+
+<!-- DASHBOARD -->
 
 <section class="card">
 
@@ -306,15 +320,20 @@ Ready.
 </div>
 
 </section>
+
+
+<!-- REPORT HISTORY -->
+
 <section class="card">
 
-  <h2>🕘 Recent Reports</h2>
+<h2>🕘 Recent Reports</h2>
 
-  <div id="history">
-    <p class="status">Loading reports...</p>
-  </div>
+<div id="history">
+<p class="status">Loading reports...</p>
+</div>
 
 </section>
+
 </main>
 
 
@@ -341,14 +360,12 @@ function startVoice(){
     return;
   }
 
-
   if(isRecording){
 
     recognition.stop();
 
     return;
   }
-
 
   recognition = new SpeechRecognition();
 
@@ -508,6 +525,10 @@ async function analyzeReport(){
       "✅ AI analysis completed";
 
 
+    /* REFRESH HISTORY */
+
+    loadHistory();
+
   }
 
   catch(error){
@@ -520,91 +541,165 @@ async function analyzeReport(){
   }
 
 }
+
+
+/* LOAD REPORT HISTORY */
+
 async function loadHistory(){
 
-  const historyBox = document.getElementById("history");
+  const historyBox =
+    document.getElementById("history");
 
   try{
 
-    const response = await fetch("/api/history");
-    const data = await response.json();
+    const response =
+      await fetch("/api/history");
+
+    const data =
+      await response.json();
+
 
     if(!response.ok){
-      throw new Error(data.error || "Could not load history");
+
+      throw new Error(
+        data.error || "Could not load history"
+      );
+
     }
 
-    const reports = data.reports || [];
+
+    const reports =
+      data.reports || [];
+
 
     if(!reports.length){
+
       historyBox.innerHTML =
         '<p class="status">No reports yet.</p>';
+
       return;
     }
 
-    historyBox.innerHTML = reports.map(report => {
 
-      const date = new Date(report.created_at);
+    historyBox.innerHTML =
+      reports.map(report => {
 
-      const reasons =
-        report.complaint_reasons || [];
+        const date =
+          new Date(report.created_at);
 
-      return `
-        <div class="history-item">
+        const reasons =
+          report.complaint_reasons || [];
 
-          <div class="history-top">
-            <strong>📋 Field Report #${report.id}</strong>
 
-            <span class="history-date">
-              ${date.toLocaleString()}
-            </span>
-          </div>
+        return `
 
-          <div class="history-metrics">
+          <div class="history-item">
 
-            <div class="history-metric">
-              <strong>${report.merchants_visited}</strong>
-              <span>Visited</span>
+            <div class="history-top">
+
+              <strong>
+                📋 Field Report #${report.id}
+              </strong>
+
+              <span class="history-date">
+                ${date.toLocaleString()}
+              </span>
+
             </div>
 
-            <div class="history-metric">
-              <strong>${report.interested}</strong>
-              <span>Interested</span>
+
+            <div class="history-metrics">
+
+              <div class="history-metric">
+
+                <strong>
+                  ${report.merchants_visited}
+                </strong>
+
+                <span>
+                  Visited
+                </span>
+
+              </div>
+
+
+              <div class="history-metric">
+
+                <strong>
+                  ${report.interested}
+                </strong>
+
+                <span>
+                  Interested
+                </span>
+
+              </div>
+
+
+              <div class="history-metric">
+
+                <strong>
+                  ${report.not_interested}
+                </strong>
+
+                <span>
+                  Not Interested
+                </span>
+
+              </div>
+
+
+              <div class="history-metric">
+
+                <strong>
+                  ${report.complaints}
+                </strong>
+
+                <span>
+                  Complaints
+                </span>
+
+              </div>
+
             </div>
 
-            <div class="history-metric">
-              <strong>${report.not_interested}</strong>
-              <span>Not Interested</span>
+
+            <div class="history-summary">
+
+              <strong>
+                Summary:
+              </strong>
+
+              ${report.summary || "No summary available"}
+
             </div>
 
-            <div class="history-metric">
-              <strong>${report.complaints}</strong>
-              <span>Complaints</span>
-            </div>
 
-          </div>
-
-          <div class="history-summary">
-            <strong>Summary:</strong>
-            ${report.summary || "No summary available"}
-          </div>
-
-          ${
-            reasons.length
+            ${
+              reasons.length
               ? `
-                <div class="history-summary" style="margin-top:8px;">
-                  <strong>Complaint:</strong>
+                <div class="history-summary">
+
+                  <strong>
+                    Complaint:
+                  </strong>
+
                   ${reasons.join(", ")}
+
                 </div>
               `
               : ""
-          }
+            }
 
-        </div>
-      `;
+          </div>
 
-    }).join("");
+        `;
 
-  } catch(error){
+      }).join("");
+
+
+  }
+  catch(error){
 
     console.error(error);
 
@@ -612,9 +707,14 @@ async function loadHistory(){
       '<p class="status">❌ Could not load report history.</p>';
 
   }
+
 }
 
+
+/* LOAD HISTORY WHEN PAGE OPENS */
+
 loadHistory();
+
 </script>
 
 </body>
