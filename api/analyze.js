@@ -1,3 +1,5 @@
+import { neon } from "@neondatabase/serverless";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -17,6 +19,15 @@ export default async function handler(req, res) {
     if (!apiKey) {
       return res.status(500).json({
         error: "Gemini API key is not configured"
+      });
+    }
+
+    const databaseUrl =
+      process.env.POSTGRES_URL_NON_POOLING;
+
+    if (!databaseUrl) {
+      return res.status(500).json({
+        error: "Database connection is not configured"
       });
     }
 
@@ -94,6 +105,31 @@ ${report}
     }
 
     const result = JSON.parse(text);
+
+    /* SAVE REPORT TO NEON */
+
+    const sql = neon(databaseUrl);
+
+    await sql`
+      INSERT INTO reports (
+        report_text,
+        merchants_visited,
+        interested,
+        not_interested,
+        complaints,
+        complaint_reasons,
+        summary
+      )
+      VALUES (
+        ${report},
+        ${result.merchants_visited ?? 0},
+        ${result.interested ?? 0},
+        ${result.not_interested ?? 0},
+        ${result.complaints ?? 0},
+        ${result.complaint_reasons ?? []},
+        ${result.summary ?? ""}
+      )
+    `;
 
     return res.status(200).json(result);
 
